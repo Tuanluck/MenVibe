@@ -2,10 +2,16 @@
 package com.example.clothingshop.dto;
 
 import lombok.Data;
+import java.util.Date;
+
 
 @Data
 public class RegisterRequest {
-    private String username;
-    private String password;
+    private String firstName;
+    private String lastName;
+    private String phone;
     private String email;
+    private String password;
+    private Date birthDate;
+    private String gender; // "Nam" hoặc "Nữ"
 }

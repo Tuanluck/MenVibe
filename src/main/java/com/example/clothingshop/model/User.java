@@ -3,6 +3,7 @@ package com.example.clothingshop.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.util.Date;
 
 @Data
 @Entity
@@ -12,12 +13,25 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private String firstName; // Họ
+
+    @Column(nullable = false)
+    private String lastName; // Tên
+
     @Column(nullable = false, unique = true)
-    private String username;
+    private String phone; // Số điện thoại
+
+    @Column(nullable = false, unique = true)
+    private String email;
 
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, unique = true)
-    private String email;
+    @Column(nullable = false)
+    @Temporal(TemporalType.DATE)
+    private Date birthDate; // Ngày sinh
+
+    @Column(nullable = false)
+    private String gender; // Giới tính
 }

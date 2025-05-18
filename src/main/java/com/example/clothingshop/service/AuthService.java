@@ -1,11 +1,14 @@
-// src/main/java/com/example/clothingshop/service/AuthService.java
 package com.example.clothingshop.service;
 
-import com.example.clothingshop.dto.LoginRequest;
-import com.example.clothingshop.dto.RegisterRequest;
+import com.example.clothingshop.dto.*;
 import com.example.clothingshop.model.User;
+import java.util.List;
 
 public interface AuthService {
     User register(RegisterRequest registerRequest);
     User login(LoginRequest loginRequest);
+    List<User> getAllUsers();
+    User getUserById(Long id);
+    User updateUser(Long id, UpdateUserRequest updateRequest);
+    void deleteUser(Long id);
 }
