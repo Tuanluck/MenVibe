@@ -5,7 +5,4 @@
           npm run dev
 ▶️ 3. Chạy project chính thức:
           npm start
-📌 Lưu ý quan trọng:
-Trong mọi file code React, phải import CSS Tailwind:
-          import index from '../css/index.css' ;
-⛔️ Nếu quên cái này là giao diện bể banh liền đó nha!
+
