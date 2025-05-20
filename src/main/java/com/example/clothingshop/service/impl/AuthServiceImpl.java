@@ -8,6 +8,7 @@ import com.example.clothingshop.dto.UpdateUserRequest;
 import com.example.clothingshop.model.User;
 import com.example.clothingshop.repository.UserRepository;
 import com.example.clothingshop.service.AuthService;
+import com.example.clothingshop.service.EmailService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,9 +19,11 @@ import java.util.UUID;
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
-    public AuthServiceImpl(UserRepository userRepository) {
+    public AuthServiceImpl(UserRepository userRepository, EmailService emailService) {
         this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     @Override
@@ -110,13 +113,17 @@ public class AuthServiceImpl implements AuthService {
         String token = UUID.randomUUID().toString();
         user.setResetToken(token);
         user.setResetTokenExpiry(LocalDateTime.now().plusMinutes(15));
-
         userRepository.save(user);
 
-        // In link đặt lại mật khẩu (thay bằng gửi email thật nếu cần)
         String resetLink = "http://localhost:3000/reset-password?token=" + token;
-        System.out.println("RESET LINK: " + resetLink);
+
+        emailService.sendEmail(
+                user.getEmail(),
+                "Yêu cầu đặt lại mật khẩu",
+                "Nhấn vào liên kết sau để đặt lại mật khẩu của bạn: \n" + resetLink
+        );
     }
+
     @Override
     public void resetPassword(ResetPasswordRequest request) {
         User user = userRepository.findByResetToken(request.getToken())
