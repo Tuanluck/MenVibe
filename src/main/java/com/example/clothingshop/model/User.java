@@ -1,9 +1,10 @@
-// src/main/java/com/example/clothingshop/model/User.java
 package com.example.clothingshop.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+
 import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -34,4 +35,9 @@ public class User {
 
     @Column(nullable = false)
     private String gender; // Giới tính
+
+    // ➕ Thêm cho chức năng quên mật khẩu
+    private String resetToken;
+
+    private LocalDateTime resetTokenExpiry;
 }

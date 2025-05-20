@@ -1,7 +1,9 @@
 package com.example.clothingshop.controller;
 
+import com.example.clothingshop.dto.ForgotPasswordRequest;
 import com.example.clothingshop.dto.LoginRequest;
 import com.example.clothingshop.dto.RegisterRequest;
+import com.example.clothingshop.dto.ResetPasswordRequest;
 import com.example.clothingshop.dto.UpdateUserRequest;
 import com.example.clothingshop.model.User;
 import com.example.clothingshop.service.AuthService;
@@ -12,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class AuthController {
 
     private final AuthService authService;
@@ -34,21 +37,21 @@ public class AuthController {
         return ResponseEntity.ok(user);
     }
 
-    // Lấy thông tin tất cả users (chỉ dành cho admin)
+    // Lấy tất cả user
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = authService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 
-    // Lấy thông tin user bằng ID
+    // Lấy user theo id
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         User user = authService.getUserById(id);
         return ResponseEntity.ok(user);
     }
 
-    // Cập nhật thông tin user
+    // Cập nhật user
     @PutMapping("/users/{id}")
     public ResponseEntity<User> updateUser(
             @PathVariable Long id,
@@ -63,4 +66,18 @@ public class AuthController {
         authService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
+
+    // ✅ API quên mật khẩu
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        authService.forgotPassword(request);
+        return ResponseEntity.ok("Đã gửi liên kết đặt lại mật khẩu (xem ở console)");
+    }
+    // ✅ API đặt lại mật khẩu
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequest request) {
+        authService.resetPassword(request);
+        return ResponseEntity.ok("Đặt lại mật khẩu thành công!");
+    }
+
 }

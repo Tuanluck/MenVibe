@@ -2,6 +2,7 @@
 package com.example.clothingshop.dto;
 
 import lombok.Data;
+
 import java.util.Date;
 
 
@@ -13,5 +14,5 @@ public class RegisterRequest {
     private String email;
     private String password;
     private Date birthDate;
-    private String gender; // "Nam" hoặc "Nữ"
+    private String gender;
 }

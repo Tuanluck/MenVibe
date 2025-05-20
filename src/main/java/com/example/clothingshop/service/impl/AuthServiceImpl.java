@@ -1,5 +1,7 @@
 package com.example.clothingshop.service.impl;
 
+import com.example.clothingshop.dto.ForgotPasswordRequest;
+import com.example.clothingshop.dto.ResetPasswordRequest;
 import com.example.clothingshop.dto.LoginRequest;
 import com.example.clothingshop.dto.RegisterRequest;
 import com.example.clothingshop.dto.UpdateUserRequest;
@@ -8,7 +10,9 @@ import com.example.clothingshop.repository.UserRepository;
 import com.example.clothingshop.service.AuthService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -21,23 +25,20 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public User register(RegisterRequest registerRequest) {
-        // Kiểm tra email đã tồn tại
         if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
             throw new RuntimeException("Email đã được đăng ký");
         }
 
-        // Kiểm tra số điện thoại đã tồn tại
         if (userRepository.findByPhone(registerRequest.getPhone()).isPresent()) {
             throw new RuntimeException("Số điện thoại đã được sử dụng");
         }
 
-        // Tạo user mới
         User user = new User();
         user.setFirstName(registerRequest.getFirstName());
         user.setLastName(registerRequest.getLastName());
         user.setPhone(registerRequest.getPhone());
         user.setEmail(registerRequest.getEmail());
-        user.setPassword(registerRequest.getPassword()); // Lưu ý: Nên mã hóa password
+        user.setPassword(registerRequest.getPassword()); // Nên mã hóa mật khẩu
         user.setBirthDate(registerRequest.getBirthDate());
         user.setGender(registerRequest.getGender());
 
@@ -71,7 +72,6 @@ public class AuthServiceImpl implements AuthService {
     public User updateUser(Long id, UpdateUserRequest updateRequest) {
         User existingUser = getUserById(id);
 
-        // Cập nhật các trường được cung cấp
         if (updateRequest.getFirstName() != null) {
             existingUser.setFirstName(updateRequest.getFirstName());
         }
@@ -79,7 +79,6 @@ public class AuthServiceImpl implements AuthService {
             existingUser.setLastName(updateRequest.getLastName());
         }
         if (updateRequest.getPhone() != null) {
-            // Kiểm tra số điện thoại mới không trùng với user khác
             if (!existingUser.getPhone().equals(updateRequest.getPhone()) &&
                     userRepository.findByPhone(updateRequest.getPhone()).isPresent()) {
                 throw new RuntimeException("Số điện thoại đã được sử dụng");
@@ -101,4 +100,38 @@ public class AuthServiceImpl implements AuthService {
         User user = getUserById(id);
         userRepository.delete(user);
     }
+
+    // ✅ Xử lý quên mật khẩu
+    @Override
+    public void forgotPassword(ForgotPasswordRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Email không tồn tại"));
+
+        String token = UUID.randomUUID().toString();
+        user.setResetToken(token);
+        user.setResetTokenExpiry(LocalDateTime.now().plusMinutes(15));
+
+        userRepository.save(user);
+
+        // In link đặt lại mật khẩu (thay bằng gửi email thật nếu cần)
+        String resetLink = "http://localhost:3000/reset-password?token=" + token;
+        System.out.println("RESET LINK: " + resetLink);
+    }
+    @Override
+    public void resetPassword(ResetPasswordRequest request) {
+        User user = userRepository.findByResetToken(request.getToken())
+                .orElseThrow(() -> new RuntimeException("Token không hợp lệ"));
+
+        if (user.getResetTokenExpiry() == null || user.getResetTokenExpiry().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Token đã hết hạn");
+        }
+
+        user.setPassword(request.getNewPassword()); // 🔐 Nên mã hóa mật khẩu nếu có
+        user.setResetToken(null);
+        user.setResetTokenExpiry(null);
+
+        userRepository.save(user);
+    }
+
+
 }
