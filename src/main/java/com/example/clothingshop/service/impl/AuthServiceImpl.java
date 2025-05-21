@@ -14,6 +14,11 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.core.io.ClassPathResource;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.io.IOException;
+
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -117,11 +122,13 @@ public class AuthServiceImpl implements AuthService {
 
         String resetLink = "http://localhost:3000/reset-password?token=" + token;
 
-        emailService.sendEmail(
+        String emailContent = loadEmailTemplate(token);
+        emailService.sendHtmlEmail(
                 user.getEmail(),
                 "Yêu cầu đặt lại mật khẩu",
-                "Nhấn vào liên kết sau để đặt lại mật khẩu của bạn: \n" + resetLink
+                emailContent
         );
+
     }
 
     @Override
@@ -139,6 +146,17 @@ public class AuthServiceImpl implements AuthService {
 
         userRepository.save(user);
     }
+    private String loadEmailTemplate(String token) {
+        try {
+            ClassPathResource resource = new ClassPathResource("templates/reset-password-template.html");
+            String template = new String(Files.readAllBytes(resource.getFile().toPath()), StandardCharsets.UTF_8);
+            String resetLink = "http://localhost:3000/reset-password?token=" + token;
+            return template.replace("${resetLink}", resetLink);
+        } catch (IOException e) {
+            throw new RuntimeException("Không thể load email template", e);
+        }
+    }
+
 
 
 }
