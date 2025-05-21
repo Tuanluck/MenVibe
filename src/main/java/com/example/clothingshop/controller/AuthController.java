@@ -7,6 +7,7 @@ import com.example.clothingshop.dto.ResetPasswordRequest;
 import com.example.clothingshop.dto.UpdateUserRequest;
 import com.example.clothingshop.model.User;
 import com.example.clothingshop.service.AuthService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,8 +71,14 @@ public class AuthController {
     // ✅ API quên mật khẩu
     @PostMapping("/forgot-password")
     public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequest request) {
-        authService.forgotPassword(request);
-        return ResponseEntity.ok("Đã gửi liên kết đặt lại mật khẩu (xem ở console)");
+        try {
+            authService.forgotPassword(request);
+            return ResponseEntity.ok("Đã gửi liên kết đặt lại mật khẩu (xem ở console)");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body( e.getMessage());
+        }
     }
     // ✅ API đặt lại mật khẩu
     @PostMapping("/reset-password")

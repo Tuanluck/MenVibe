@@ -120,15 +120,17 @@ public class AuthServiceImpl implements AuthService {
         user.setResetTokenExpiry(LocalDateTime.now().plusMinutes(15));
         userRepository.save(user);
 
-        String resetLink = "http://localhost:3000/reset-password?token=" + token;
-
         String emailContent = loadEmailTemplate(token);
-        emailService.sendHtmlEmail(
-                user.getEmail(),
-                "Yêu cầu đặt lại mật khẩu",
-                emailContent
-        );
 
+        try {
+            emailService.sendHtmlEmail(
+                    user.getEmail(),
+                    "Yêu cầu đặt lại mật khẩu",
+                    emailContent
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Không thể gửi email: " + e.getMessage(), e);
+        }
     }
 
     @Override
