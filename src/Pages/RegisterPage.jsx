@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-
 export default function RegisterForm() {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -11,12 +10,17 @@ export default function RegisterForm() {
     birthDate: '',
     gender: '',
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   const handleSubmit = async (e) => {
@@ -50,34 +54,43 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
-      <form onSubmit={handleSubmit} className="w-full max-w-2xl bg-white rounded-xl shadow-xl overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-purple-50 to-gray-100 p-4">
+      <form onSubmit={handleSubmit} className="w-full max-w-4xl bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
         <div className="md:flex">
           {/* Left decorative panel */}
-          <div className="hidden md:block md:w-1/3 bg-gradient-to-b from-amber-400 to-indigo-800 p-8 text-white">
+          <div className="hidden md:block md:w-1/3 bg-gradient-to-b from-indigo-500 to-violet-700 p-10 text-white">
             <div className="h-full flex flex-col justify-between">
               <div>
-                <h2 className="text-2xl font-light mb-2">Tạo tài khoản</h2>
-                <p className="text-indigo-100 text-sm">Tham gia cùng chúng tôi và khám phá thế giới mới</p>
+                <h2 className="text-2xl font-semibold mb-3">Tạo tài khoản mới</h2>
+                <p className="text-indigo-100 text-sm opacity-90">Tham gia cùng chúng tôi để trải nghiệm những dịch vụ tuyệt vời nhất</p>
               </div>
+              
               <div className="mt-8">
-                <div className="w-12 h-1 bg-amber-400 mb-4"></div>
-                <p className="text-indigo-200 text-xs">Đã có tài khoản?</p>
-                <a href="./login" className="text-white text-sm font-medium hover:underline">Đăng nhập ngay</a>
+                <div className="w-16 h-1 bg-indigo-300 mb-4 rounded-full"></div>
+                <p className="text-indigo-200 text-sm mb-2">Đã có tài khoản?</p>
+                <a 
+                  href="./login" 
+                  className="inline-flex items-center text-white text-sm font-medium hover:underline transition duration-200"
+                >
+                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                  </svg>
+                  Đăng nhập ngay
+                </a>
               </div>
             </div>
           </div>
 
           {/* Right form panel */}
-          <div className="w-full md:w-2/3 p-8">
+          <div className="w-full md:w-2/3 p-8 md:p-10">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-light text-gray-800 mb-2 tracking-wide">ĐĂNG KÝ</h2>
-              <div className="w-20 h-0.5 bg-gradient-to-r from-amber-400 to-indigo-700 mx-auto"></div>
+              <h2 className="text-3xl font-semibold text-gray-800 mb-2">ĐĂNG KÝ</h2>
+              <div className="w-24 h-1 bg-gradient-to-r from-indigo-500 to-violet-600 mx-auto rounded-full"></div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Họ</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Họ</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -85,13 +98,14 @@ export default function RegisterForm() {
                     value={formData.firstName}
                     onChange={handleChange}
                     required
-                    className="w-full pl-4 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition duration-200"
+                    placeholder="Nhập họ của bạn"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tên</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Tên</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -99,13 +113,14 @@ export default function RegisterForm() {
                     value={formData.lastName}
                     onChange={handleChange}
                     required
-                    className="w-full pl-4 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition duration-200"
+                    placeholder="Nhập tên của bạn"
                   />
                 </div>
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -118,13 +133,14 @@ export default function RegisterForm() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition duration-200"
+                    placeholder="your@email.com"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Mật khẩu</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Mật khẩu</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -132,18 +148,37 @@ export default function RegisterForm() {
                     </svg>
                   </div>
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition duration-200"
+                    placeholder="••••••••"
                   />
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  >
+                    <svg className="h-5 w-5 text-gray-400 hover:text-indigo-600 transition duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      {showPassword ? (
+                        <>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </>
+                      ) : (
+                        <>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                        </>
+                      )}
+                    </svg>
+                  </button>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Số điện thoại</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -156,13 +191,14 @@ export default function RegisterForm() {
                     value={formData.phone}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition duration-200"
+                    placeholder="Nhập số điện thoại"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Ngày sinh</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Ngày sinh</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -175,13 +211,13 @@ export default function RegisterForm() {
                     value={formData.birthDate}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition appearance-none"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition duration-200 appearance-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Giới tính</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Giới tính</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -193,7 +229,7 @@ export default function RegisterForm() {
                     value={formData.gender}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition appearance-none"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition duration-200 appearance-none"
                   >
                     <option value="">Chọn giới tính</option>
                     <option value="Male">Nam</option>
@@ -206,10 +242,18 @@ export default function RegisterForm() {
 
             <button
               type="submit"
-              className="w-full mt-8 py-3 px-4 bg-gradient-to-r from-indigo-600 to-indigo-800 hover:from-indigo-700 hover:to-indigo-900 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition duration-300"
+              className="w-full mt-8 py-3 px-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             >
               Đăng Ký
             </button>
+
+            {/* Mobile login link */}
+            <div className="mt-6 text-center md:hidden">
+              <p className="text-sm text-gray-600">
+                Đã có tài khoản?{' '}
+                <a href="./login" className="text-indigo-600 hover:text-indigo-800 font-medium transition duration-200">Đăng nhập ngay</a>
+              </p>
+            </div>
           </div>
         </div>
       </form>
