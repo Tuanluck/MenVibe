@@ -30,4 +30,8 @@ public class ProductServiceImpl implements ProductService {
                 .filter(p -> p.getName().toLowerCase().contains(keyword.toLowerCase()))
                 .toList();
     }
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
+
 }

@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class ProductController {
 
     @Autowired
@@ -28,4 +29,10 @@ public class ProductController {
     public List<Product> searchProducts(@RequestParam String keyword) {
         return productService.searchProducts(keyword);
     }
+
+    @GetMapping("/all")
+    public List<Product> getAllProducts() {
+        return productService.getAllProducts(); // Không được gọi trực tiếp productRepository ở controller nhé
+    }
+
 }
