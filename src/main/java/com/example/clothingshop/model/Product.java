@@ -1,5 +1,6 @@
 package com.example.clothingshop.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,7 +20,7 @@ public class Product {
     private int stock;
 
     @Column(name = "image_url")
-    private String imageUrl;  // Added field for storing image URL or path
+    private String imageUrl;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
