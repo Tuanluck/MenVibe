@@ -11,15 +11,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class ProductController {
 
     @Autowired
     private ProductService productService;
 
-    // Lấy tất cả sản phẩm
+
     @GetMapping("/all")
     public List<Product> getAllProducts() {
-        return productService.getAllProducts();
+        return productService.getAllProducts(); // Không được gọi trực tiếp productRepository ở controller nhé
     }
 
     // Lấy sản phẩm theo categoryId (tham số tùy chọn)

@@ -32,12 +32,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getAllProducts() {
-        return List.of();
-    }
-
-    @Override
     public List<Product> filterProducts(Long categoryId, Double minPrice, Double maxPrice, Boolean inStock) {
         return productRepository.filterProducts(categoryId, minPrice, maxPrice, inStock);
+    }
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
     }
 }

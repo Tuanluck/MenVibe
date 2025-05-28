@@ -9,4 +9,5 @@ public interface ProductService {
     List<Product> searchProducts(String keyword);
     List<Product> getAllProducts();
     List<Product> filterProducts(Long categoryId, Double minPrice, Double maxPrice, Boolean inStock);
+
 }
