@@ -30,4 +30,14 @@ public class ProductServiceImpl implements ProductService {
                 .filter(p -> p.getName().toLowerCase().contains(keyword.toLowerCase()))
                 .toList();
     }
+
+    @Override
+    public List<Product> getAllProducts() {
+        return List.of();
+    }
+
+    @Override
+    public List<Product> filterProducts(Long categoryId, Double minPrice, Double maxPrice, Boolean inStock) {
+        return productRepository.filterProducts(categoryId, minPrice, maxPrice, inStock);
+    }
 }
