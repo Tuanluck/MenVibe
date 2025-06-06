@@ -1,0 +1,10 @@
+.Featured .Collections{
+    background: rgba(0,0,0,0.5);
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fadeIn {
+  animation: fadeIn 1s ease-in;
+}
