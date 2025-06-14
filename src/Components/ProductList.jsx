@@ -1,4 +1,8 @@
+import { useNavigate } from 'react-router-dom'; // ✅ THÊM import này
+
 const ProductList = ({ products, loading, addToCart }) => {
+  const navigate = useNavigate(); // ✅ THÊM useNavigate()
+
   // Kiểm tra loading và hiển thị spinner
   if (loading && products.length === 0) {
     return (
@@ -26,9 +30,10 @@ const ProductList = ({ products, loading, addToCart }) => {
             >
               <div className="relative h-80 overflow-hidden">
                 <img
+                  onClick={() => navigate(`/product/${product.id}`)} // ✅ THÊM chức năng click để điều hướng
                   src={product.imageUrl || 'https://via.placeholder.com/300'}
                   alt={product.name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 cursor-pointer" // ✅ THÊM cursor-pointer
                 />
                 <button
                   onClick={() => addToCart(product)}

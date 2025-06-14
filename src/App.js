@@ -6,7 +6,10 @@ import ForgotPassword from './Pages/ForgotPassword';
 import ResetPassword from './Pages/ResetPassword';
 import HomePage from './Pages/Home';
 import Profile from './Pages/Profile';
-
+import ProductList from './Components/ProductList';
+import ProductDetail from './Components/ProductDetail';
+import AddProductPage from './Pages/AddProductPage';
+import CartPage from './Pages/CartPage';
 
 function App() {
   return (
@@ -19,6 +22,10 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/Profile" element={<Profile />} />
+        <Route path="/products" element={<ProductList />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/add-product" element={<AddProductPage />} />  
+        <Route path="/cart" element={<CartPage />} />  
       </Routes>
     </Router>
   );
