@@ -1,5 +1,6 @@
 package com.example.clothingshop.service.impl;
 
+import com.example.clothingshop.dto.CartResponseDTO;
 import com.example.clothingshop.model.Cart;
 import com.example.clothingshop.model.CartItem;
 import com.example.clothingshop.model.Product;
@@ -11,6 +12,7 @@ import com.example.clothingshop.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -62,6 +64,7 @@ public class CartServiceImpl implements CartService {
             cart.getItems().add(cartItem);
         }
 
+        cartItem.setTotalPrice(product.getPrice() * cartItem.getQuantity()); // Cập nhật totalPrice
         cartRepository.save(cart);
         return cartItem;
     }
@@ -75,8 +78,42 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow(() -> new RuntimeException("Product not found in cart with ID: " + productId));
 
         cartItem.setQuantity(cartItem.getQuantity() + 1);
+        cartItem.setTotalPrice(cartItem.getProduct().getPrice() * cartItem.getQuantity()); // Cập nhật totalPrice
         cartRepository.save(cart);
         return cartItem;
+    }
+
+    @Override
+    public CartItem decreaseQuantity(Long userId, Long productId) {
+        Cart cart = getCartByUserId(userId);
+        CartItem cartItem = cart.getItems().stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Product not found in cart with ID: " + productId));
+
+        cartItem.setQuantity(cartItem.getQuantity() - 1);
+        if (cartItem.getQuantity() <= 0) {
+            cart.getItems().remove(cartItem);
+            // Giả định bạn có CartItemRepository để xóa item
+            // Nếu không, chỉ cần xóa khỏi danh sách items
+            return null; // Trả null để báo hiệu đã xóa
+        }
+        cartItem.setTotalPrice(cartItem.getProduct().getPrice() * cartItem.getQuantity()); // Cập nhật totalPrice
+        cartRepository.save(cart);
+        return cartItem;
+    }
+
+    @Override
+    public void removeItem(Long userId, Long productId) {
+        Cart cart = getCartByUserId(userId);
+        CartItem itemToRemove = cart.getItems().stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Product not found in cart with ID: " + productId));
+        cart.getItems().remove(itemToRemove);
+        // Giả định bạn có CartItemRepository để xóa item khỏi database
+        // Nếu không, chỉ cần xóa khỏi danh sách items
+        cartRepository.save(cart);
     }
 
     @Override
@@ -84,5 +121,31 @@ public class CartServiceImpl implements CartService {
         Cart cart = getCartByUserId(userId);
         cart.getItems().clear();
         cartRepository.save(cart);
+    }
+
+    @Override
+    public double getCartTotal(Long userId) {
+        Cart cart = getCartByUserId(userId);
+        return cart.getItems().stream()
+                .mapToDouble(CartItem::getTotalPrice)
+                .sum();
+    }
+
+    @Override
+    public Cart saveCart(Long userId, List<CartResponseDTO.CartItemDTO> items) {
+        Cart cart = getCartByUserId(userId);
+        cart.getItems().clear(); // Xóa giỏ hiện tại
+
+        for (CartResponseDTO.CartItemDTO itemDTO : items) {
+            Product product = productRepository.findById(itemDTO.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Product not found with ID: " + itemDTO.getProductId()));
+            CartItem cartItem = new CartItem();
+            cartItem.setCart(cart);
+            cartItem.setProduct(product);
+            cartItem.setQuantity(itemDTO.getQuantity());
+            cartItem.setTotalPrice(product.getPrice() * itemDTO.getQuantity()); // Cập nhật totalPrice
+            cart.getItems().add(cartItem);
+        }
+        return cartRepository.save(cart);
     }
 }

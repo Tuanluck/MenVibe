@@ -8,7 +8,6 @@ import java.util.List;
 @Setter
 @Getter
 public class CartResponseDTO {
-    // Getters and setters
     private Long id;
     private Long userId;
     private List<CartItemDTO> items;
@@ -22,24 +21,22 @@ public class CartResponseDTO {
     @Setter
     @Getter
     public static class CartItemDTO {
-        // Getters and setters
         private Long id;
         private Long productId;
-        private String productName;
-        private double price;
+        private String name; // Sửa từ productName thành name để khớp với khai báo trường
+        private Double price;
         private String imageUrl;
         private int quantity;
-        private double totalPrice;
+        private Double totalPrice;
 
-        public CartItemDTO(Long id, Long productId, String productName, double price, String imageUrl, int quantity, double totalPrice) {
+        public CartItemDTO(Long id, Long productId, String name, Double price, String imageUrl, int quantity, Double totalPrice) {
             this.id = id;
             this.productId = productId;
-            this.productName = productName;
+            this.name = name; // Sử dụng name thay vì productName
             this.price = price;
             this.imageUrl = imageUrl;
             this.quantity = quantity;
             this.totalPrice = totalPrice;
         }
-
     }
 }

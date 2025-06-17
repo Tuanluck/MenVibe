@@ -26,18 +26,7 @@ public class CartController {
     public CartResponseDTO getCart(@PathVariable Long userId) {
         try {
             Cart cart = cartService.getCartByUserId(userId);
-            List<CartResponseDTO.CartItemDTO> items = cart.getItems().stream()
-                    .map(item -> new CartResponseDTO.CartItemDTO(
-                            item.getId(),
-                            item.getProduct().getId(),
-                            item.getProduct().getName(),
-                            item.getProduct().getPrice(),
-                            item.getProduct().getImageUrl(),
-                            item.getQuantity(),
-                            item.getTotalPrice()
-                    ))
-                    .collect(Collectors.toList());
-            return new CartResponseDTO(cart.getId(), cart.getUser().getId(), items);
+            return getCartResponseDTO(cart);
         } catch (RuntimeException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -86,6 +75,44 @@ public class CartController {
         }
     }
 
+    @PutMapping("/{userId}/decrease")
+    public Map<String, Object> decreaseQuantity(@PathVariable Long userId,
+                                                @RequestParam Long productId) {
+        try {
+            CartItem cartItem = cartService.decreaseQuantity(userId, productId);
+            Map<String, Object> response = new HashMap<>();
+            if (cartItem != null) {
+                response.put("message", "Đã giảm số lượng");
+                response.put("product", Map.of(
+                        "id", cartItem.getProduct().getId(),
+                        "name", cartItem.getProduct().getName(),
+                        "price", cartItem.getProduct().getPrice(),
+                        "imageUrl", cartItem.getProduct().getImageUrl(),
+                        "quantity", cartItem.getQuantity(),
+                        "totalPrice", cartItem.getTotalPrice()
+                ));
+            } else {
+                response.put("message", "Sản phẩm đã bị xóa khỏi giỏ vì số lượng về 0");
+            }
+            return response;
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{userId}/remove")
+    public Map<String, Object> removeItem(@PathVariable Long userId,
+                                          @RequestParam Long productId) {
+        try {
+            cartService.removeItem(userId, productId);
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Sản phẩm đã được xóa khỏi giỏ");
+            return response;
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
     @DeleteMapping("/{userId}/clear")
     public void clearCart(@PathVariable Long userId) {
         try {
@@ -93,5 +120,43 @@ public class CartController {
         } catch (RuntimeException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
+    }
+
+    @GetMapping("/{userId}/total")
+    public Map<String, Double> getTotal(@PathVariable Long userId) {
+        try {
+            double total = cartService.getCartTotal(userId);
+            Map<String, Double> response = new HashMap<>();
+            response.put("total", total);
+            return response;
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+    @PostMapping("/{userId}/save")
+    public CartResponseDTO saveCart(@PathVariable Long userId,
+                                    @RequestBody List<CartResponseDTO.CartItemDTO> items) {
+        try {
+            Cart cart = cartService.saveCart(userId, items);
+            return getCartResponseDTO(cart);
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+    private CartResponseDTO getCartResponseDTO(Cart cart) {
+        List<CartResponseDTO.CartItemDTO> updatedItems = cart.getItems().stream()
+                .map(item -> new CartResponseDTO.CartItemDTO(
+                        item.getId(),
+                        item.getProduct().getId(),
+                        item.getProduct().getName(),
+                        item.getProduct().getPrice(),
+                        item.getProduct().getImageUrl(),
+                        item.getQuantity(),
+                        item.getTotalPrice()
+                ))
+                .collect(Collectors.toList());
+        return new CartResponseDTO(cart.getId(), cart.getUser().getId(), updatedItems);
     }
 }
