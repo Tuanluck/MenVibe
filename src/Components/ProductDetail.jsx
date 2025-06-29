@@ -1,9 +1,11 @@
+// src/Pages/ProductDetail.jsx
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Header from './Header';
 import Footer from './Footer';
+import { getUser } from '../utils/auth';
 
-const ProductDetail = ({ addToCart }) => {
+const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
@@ -12,6 +14,9 @@ const ProductDetail = ({ addToCart }) => {
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [review, setReview] = useState("");
+
+  const user = getUser();
+  const userId = user?.id;
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -42,8 +47,43 @@ const ProductDetail = ({ addToCart }) => {
     fetchProduct();
   }, [id]);
 
-  const handleAddToCart = () => {
-    if (quantity > 0) addToCart({ ...product, quantity });
+  const handleAddToCart = async () => {
+    if (!product || quantity < 1) return;
+
+    const itemToAdd = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      imageUrl: product.imageUrl,
+      quantity,
+    };
+
+    if (!userId) {
+      const guestCart = JSON.parse(localStorage.getItem("guestCart")) || [];
+      const existingIndex = guestCart.findIndex((item) => item.id === product.id);
+      if (existingIndex !== -1) {
+        guestCart[existingIndex].quantity += quantity;
+      } else {
+        guestCart.push(itemToAdd);
+      }
+      localStorage.setItem("guestCart", JSON.stringify(guestCart));
+      alert("🛒 Đã thêm vào giỏ hàng tạm.");
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `http://localhost:8080/api/cart/${userId}/add?productId=${product.id}&quantity=${quantity}`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      if (!res.ok) throw new Error("❌ Thêm vào giỏ thất bại");
+      alert("✅ Đã thêm vào giỏ hàng!");
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   const increaseQty = () => {
@@ -79,7 +119,6 @@ const ProductDetail = ({ addToCart }) => {
       <Header cartItems={[]} />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid md:grid-cols-2 gap-10">
-        {/* Product Image */}
         <div className="rounded-lg shadow-lg overflow-hidden">
           <img
             src={product.imageUrl || 'https://via.placeholder.com/600x700'}
@@ -88,7 +127,6 @@ const ProductDetail = ({ addToCart }) => {
           />
         </div>
 
-        {/* Product Info */}
         <div className="flex flex-col justify-between space-y-8">
           <div>
             <h1 className="text-4xl font-bold mb-4">{product.name}</h1>
@@ -101,21 +139,18 @@ const ProductDetail = ({ addToCart }) => {
               <span className="text-sm text-gray-500 ml-2">(2,814 đánh giá)</span>
             </div>
 
-            {/* Price */}
             <div className="mb-6 space-y-1">
               <p className="text-gray-500 line-through text-xl">{(product.price * 1.1).toLocaleString()}đ</p>
               <p className="text-3xl font-semibold text-red-600">{product.price.toLocaleString()}đ</p>
               <p className="text-sm text-orange-500 font-medium">-10% giảm giá</p>
             </div>
 
-            {/* Quantity Control */}
             <div className="flex items-center gap-4 mb-6">
               <span className="font-medium">Số lượng:</span>
               <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
                 <button
                   onClick={decreaseQty}
                   className="w-10 h-10 text-xl hover:bg-gray-100 transition"
-                  aria-label="Giảm số lượng"
                 >−</button>
                 <input
                   type="number"
@@ -126,13 +161,11 @@ const ProductDetail = ({ addToCart }) => {
                 <button
                   onClick={increaseQty}
                   className="w-10 h-10 text-xl hover:bg-gray-100 transition"
-                  aria-label="Tăng số lượng"
                 >+</button>
               </div>
               <span className="text-sm text-gray-500">Còn {product.stock} sản phẩm</span>
             </div>
 
-            {/* Actions */}
             <div className="flex flex-wrap gap-4">
               <button
                 onClick={() => {
@@ -154,7 +187,6 @@ const ProductDetail = ({ addToCart }) => {
         </div>
       </main>
 
-      {/* Review Section */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
         <h2 className="text-2xl font-semibold mb-4">Viết đánh giá của bạn</h2>
         <textarea
@@ -172,7 +204,6 @@ const ProductDetail = ({ addToCart }) => {
         </button>
       </section>
 
-      {/* Related Products */}
       {relatedProducts.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 py-12">
           <h2 className="text-xl font-semibold mb-6">Sản phẩm liên quan</h2>
