@@ -90,6 +90,7 @@ public class OrderServiceImpl implements OrderService {
     public Order processPaymentAndSendEmail(Long userId, String shippingAddress, String email) {
         Order order = createOrder(userId, shippingAddress);
 
+        // Gửi email xác nhận
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
         message.setSubject("Xác nhận đơn hàng từ Clothingshop");
@@ -104,6 +105,11 @@ public class OrderServiceImpl implements OrderService {
                 "Trạng thái: " + order.getStatus());
         mailSender.send(message);
         logger.info("Email sent for order ID: {}", order.getId());
+
+        // Cập nhật trạng thái thành COMPLETED sau khi thanh toán thành công (giả định email gửi thành công là thanh toán thành công)
+        order.setStatus(OrderStatus.COMPLETED);
+        order = orderRepository.save(order);
+        logger.info("Order ID: {} updated to COMPLETED", order.getId());
 
         return order;
     }
