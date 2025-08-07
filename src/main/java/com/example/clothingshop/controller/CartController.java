@@ -47,7 +47,7 @@ public class CartController {
                     "imageUrl", cartItem.getProduct().getImageUrl(),
                     "quantity", cartItem.getQuantity(),
                     "totalPrice", cartItem.getTotalPrice()
-            ));
+            )); 
             return response;
         } catch (RuntimeException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());

@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/orders")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class OrderController {
 
     @Autowired

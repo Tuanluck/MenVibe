@@ -41,7 +41,7 @@ public class AuthController {
     // Lấy tất cả user
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = authService.getAllUsers();
+            List<User> users = authService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 
@@ -73,7 +73,7 @@ public class AuthController {
     public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequest request) {
         try {
             authService.forgotPassword(request);
-            return ResponseEntity.ok("Đã gửi liên kết đặt lại mật khẩu (xem ở console)");
+            return ResponseEntity.ok("Đã gửi liên kết đặt lại mật khẩu ");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
