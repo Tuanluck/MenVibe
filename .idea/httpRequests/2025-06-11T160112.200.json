@@ -1,0 +1,38 @@
+[
+  {
+    "id": 7,
+    "firstName": "Jane",
+    "lastName": "Smith",
+    "phone": "0912345678",
+    "email": "jane.smith@example.com",
+    "password": "anotherSecurePassword",
+    "birthDate": "1995-05-15",
+    "gender": "FEMALE",
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "id": 16,
+    "firstName": "Nguyen",
+    "lastName": "Tuan",
+    "phone": "0397191958",
+    "email": "22h1120058@ut.edu.vn",
+    "password": "123456",
+    "birthDate": "2004-05-31",
+    "gender": "Male",
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "id": 20,
+    "firstName": "Nguyen",
+    "lastName": "Tuan",
+    "phone": "0397190959",
+    "email": "nguyenanhtuan@gmail.com",
+    "password": "12345678",
+    "birthDate": "2025-05-24",
+    "gender": "Male",
+    "resetToken": null,
+    "resetTokenExpiry": null
+  }
+]

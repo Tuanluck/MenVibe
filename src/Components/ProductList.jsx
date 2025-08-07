@@ -1,9 +1,8 @@
-import { useNavigate } from 'react-router-dom'; // ✅ THÊM import này
+import { useNavigate } from "react-router-dom";
 
 const ProductList = ({ products, loading, addToCart }) => {
-  const navigate = useNavigate(); // ✅ THÊM useNavigate()
+  const navigate = useNavigate();
 
-  // Kiểm tra loading và hiển thị spinner
   if (loading && products.length === 0) {
     return (
       <div className="flex justify-center py-20">
@@ -12,28 +11,21 @@ const ProductList = ({ products, loading, addToCart }) => {
     );
   }
 
-  // Render danh sách sản phẩm
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-4 pb-20">
-      {products && products.length > 0 ? (
-        products.map((product) => {
-          // Kiểm tra dữ liệu sản phẩm có hợp lệ không
-          if (!product || !product.id || !product.name || !product.price) {
-            console.warn('Product data is incomplete:', product);
-            return null; // Bỏ qua sản phẩm không hợp lệ
-          }
-
-          return (
+    <div className="relative max-h-[80vh] overflow-y-auto px-4 pb-20">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        {products && products.length > 0 ? (
+          products.map((product) => (
             <div
               key={product.id}
               className="group bg-white relative overflow-hidden rounded-xl shadow-md hover:shadow-2xl transition-all duration-500 border border-gray-100"
             >
               <div className="relative h-80 overflow-hidden">
                 <img
-                  onClick={() => navigate(`/product/${product.id}`)} // ✅ THÊM chức năng click để điều hướng
-                  src={product.imageUrl || 'https://via.placeholder.com/300'}
+                  onClick={() => navigate(`/product/${product.id}`)}
+                  src={product.imageUrl || "https://via.placeholder.com/300"}
                   alt={product.name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 cursor-pointer" // ✅ THÊM cursor-pointer
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 cursor-pointer"
                 />
                 <button
                   onClick={() => addToCart(product)}
@@ -47,21 +39,29 @@ const ProductList = ({ products, loading, addToCart }) => {
                   {product.name}
                 </h3>
                 <p className="text-gray-600 text-sm mb-2 line-clamp-2">
-                  {product.description || 'No description available'}
+                  {product.description || "No description available"}
                 </p>
                 <div className="flex justify-between items-center">
                   <span className="font-bold text-lg">
-                    {typeof product.price === 'number' ? product.price.toLocaleString() : '0'}đ
+                    {typeof product.price === "number"
+                      ? product.price.toLocaleString()
+                      : "0"}
+                    đ
                   </span>
                   <span className="text-xs text-gray-500">Free Tailoring</span>
                 </div>
               </div>
             </div>
-          );
-        })
-      ) : (
-        <div className="text-center py-20 text-gray-500 text-xl">No products found in this collection</div>
-      )}
+          ))
+        ) : (
+          <div className="text-center py-20 text-gray-500 text-xl col-span-full">
+            No products found in this collection
+          </div>
+        )}
+      </div>
+
+      {/* Hiệu ứng mờ đáy */}
+      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent pointer-events-none" />
     </div>
   );
 };

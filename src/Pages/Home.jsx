@@ -18,7 +18,6 @@ export default function HomePage() {
   const [cartItems, setCartItems] = useState([]);
 
   const user = getUser();
-  const token = getToken();
   const userId = user?.id;
 
   const banners = [
@@ -75,16 +74,14 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    if (token && userId) {
+    if (userId) {
       fetchCart();
     }
-  }, [token, userId]);
+  }, [userId]);
 
   const fetchCart = async () => {
     try {
-      const res = await fetch(`http://localhost:8080/api/cart/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(`http://localhost:8080/api/cart/${userId}`, {});
       if (!res.ok) throw new Error("Không tải được giỏ hàng.");
       const data = await res.json();
       setCartItems(data.items || []);
@@ -154,20 +151,38 @@ export default function HomePage() {
   };
 
   const addToCart = async (product) => {
-    if (!token || !userId) {
-      alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.");
+    if (!userId) {
+      // Lưu vào localStorage nếu chưa đăng nhập
+      let guestCart = JSON.parse(localStorage.getItem("guestCart")) || [];
+
+      const existingItem = guestCart.find((item) => item.id === product.id);
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        guestCart.push({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          imageUrl: product.imageUrl,
+          quantity: 1,
+        });
+      }
+
+      localStorage.setItem("guestCart", JSON.stringify(guestCart));
       return;
     }
+
+    // Nếu đã đăng nhập thì gọi API backend
     try {
       const res = await fetch(
         `http://localhost:8080/api/cart/${userId}/add?productId=${product.id}&quantity=1`,
         {
           method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
+          credentials: "include", // nếu có cookie
         }
       );
       if (!res.ok) throw new Error("Thêm sản phẩm thất bại.");
-      await fetchCart(); // Refresh cart after adding
+      await fetchCart(); // Làm mới giỏ hàng
     } catch (err) {
       alert(err.message);
     }

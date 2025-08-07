@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import { useNavigate } from "react-router-dom";
-import { getUser, getToken } from "../utils/auth"; // dùng hàm tiện ích
+import { getUser } from "../utils/auth";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -14,26 +14,22 @@ export default function Profile() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  const token = getToken();
   const userId = user?.id;
 
   useEffect(() => {
-    if (!token || !userId) {
-      setError("Bạn chưa đăng nhập.");
-      setLoading(false);
-      return;
-    }
+    const fetchUser = async () => {
+      if (!userId) {
+        setError("Bạn chưa đăng nhập.");
+        setLoading(false);
+        return;
+      }
 
-    fetch(`http://localhost:8080/api/auth/users/${userId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => {
+      try {
+        const res = await fetch(`http://localhost:8080/api/auth/users/${userId}`);
         if (!res.ok) throw new Error("Không tải được dữ liệu người dùng.");
-        return res.json();
-      })
-      .then((data) => {
+        const data = await res.json();
         setUser(data);
-        localStorage.setItem("user", JSON.stringify(data)); // cập nhật lại user trong localStorage
+        localStorage.setItem("user", JSON.stringify(data));
         setFormData({
           firstName: data.firstName || "",
           lastName: data.lastName || "",
@@ -42,10 +38,15 @@ export default function Profile() {
           birthDate: data.birthDate?.split("T")[0] || "",
           gender: data.gender || "",
         });
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, [token, userId]);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [userId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,7 +60,6 @@ export default function Profile() {
       const res = await fetch(`http://localhost:8080/api/auth/users/${userId}`, {
         method: "PUT",
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
@@ -67,7 +67,7 @@ export default function Profile() {
       if (!res.ok) throw new Error("Cập nhật thất bại.");
       const data = await res.json();
       setUser(data);
-      localStorage.setItem("user", JSON.stringify(data)); // cập nhật lại sau khi chỉnh sửa
+      localStorage.setItem("user", JSON.stringify(data));
       setEditMode(false);
     } catch (err) {
       alert(err.message);
@@ -96,9 +96,7 @@ export default function Profile() {
       </div>
     );
 
-  const initials = `${user.firstName?.[0] || ""}${
-    user.lastName?.[0] || ""
-  }`.toUpperCase();
+  const initials = `${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`.toUpperCase();
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-900">
@@ -106,9 +104,7 @@ export default function Profile() {
       <main className="flex-grow flex items-center justify-center p-4">
         <div className="w-full max-w-2xl bg-gray-800 rounded-xl shadow-2xl border border-gray-700 p-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-3xl font-semibold text-white">
-              Hồ Sơ Người Dùng
-            </h2>
+            <h2 className="text-3xl font-semibold text-white">Hồ Sơ Người Dùng</h2>
             <div className="w-16 h-16 rounded-full bg-indigo-600 flex items-center justify-center text-2xl font-bold text-white">
               {initials}
             </div>
