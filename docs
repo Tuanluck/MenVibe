@@ -1,8 +1,0 @@
-## 🚀 Hướng dẫn cài đặt TailwindCSS cho dự án
-🛠️ 1. Cài đặt sau khi clone/pull project:
-          npm install tailwindcss @tailwindcss/cli
-⚙️ 2. Chạy dev server:
-          npm run dev
-▶️ 3. Chạy project chính thức:
-          npm start
-
